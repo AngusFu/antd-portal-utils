@@ -33,7 +33,7 @@ export const CtxResetInternalUseOnly = ({ children }: PropsWithChildren<{}>) => 
 export function createPortalUtil(keyGenerator: () => Key) {
   const methodsRef = createRef<PortalMethods>();
   const openPortal: OpenPortalType = function (content: any, props?: any) {
-    const key = keyGenerator?.();
+    const key = keyGenerator();
 
     function Content(newProps: any) {
       const p = { ...(props as object), ...newProps };
@@ -52,10 +52,17 @@ export function createPortalUtil(keyGenerator: () => Key) {
     return {
       close: (force?: boolean) => methodsRef.current?.closePortal({ key, force }),
       update: (p: any) =>
-        methodsRef.current?.updatePortal({
-          key,
-          content: <Content {...p} key={key} />,
-        }),
+        methodsRef.current?.setPortals((prev) =>
+          prev.map((el) => {
+            const [key, content] = el;
+
+            if (key === key) {
+              return [key, cloneElement(content, p)];
+            }
+
+            return el;
+          }),
+        ),
     };
   };
   const openPopConfirm = function (popConfirmProps: PopConfirmProps) {
@@ -135,10 +142,6 @@ function usePortals() {
     }
   }, []);
 
-  const updatePortal = useCallback(({ key, content }: { key: Key; content: ReactElement }) => {
-    setPortals((prev) => prev.map((item) => (item[0] === key ? [key, content] : item)));
-  }, []);
-
   const setCustomCloseMethod = useCallback(
     ({ key, fn }: { key: Key; fn: (() => any) | null | undefined }) => {
       setCustomCloseHandles((prev) => [...prev.filter((el) => el[0] !== key), [key, fn]]);
@@ -150,10 +153,12 @@ function usePortals() {
     () => ({
       openPortal,
       closePortal,
-      updatePortal,
       setCustomCloseMethod,
+
+      // be careful
+      setPortals,
     }),
-    [openPortal, closePortal, updatePortal, setCustomCloseMethod],
+    [openPortal, closePortal, setCustomCloseMethod],
   );
 
   return [portals, methods] as const;
