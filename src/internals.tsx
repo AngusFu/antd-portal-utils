@@ -54,9 +54,9 @@ export function createPortalUtil(keyGenerator: () => Key) {
       update: (p: any) =>
         methodsRef.current?.setPortals((prev) =>
           prev.map((el) => {
-            const [key, content] = el;
+            const [k, content] = el;
 
-            if (key === key) {
+            if (k === key) {
               return [key, cloneElement(content, p)];
             }
 
