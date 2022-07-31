@@ -2,9 +2,10 @@ import type { Key } from 'react';
 import { useCreation, useMemoizedFn } from 'ahooks';
 import { createPortalUtil } from './internals';
 
+export * from './hooks';
 export { Drawer, Modal, PopConfirm as PopConfirmHack } from './components';
-export type { OpenPortalResult, OpenPortalType } from './internals';
 
+export type { OpenPortalResult, OpenPortalType } from './internals';
 export { createPortalUtil };
 
 export function usePortal(keyGenerator?: () => Key) {
