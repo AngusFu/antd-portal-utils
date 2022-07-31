@@ -90,7 +90,7 @@ export default function Demo() {
 
   return (
     <ReachableContext.Provider value="Light">
-      <Space size={32}>
+      <Space direction="vertical" size={18}>
         <Button onClick={handleOpenDrawer}>Open Drawer</Button>
 
         <Button onClick={handleOpenModal}>Open Modal</Button>

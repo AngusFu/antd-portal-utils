@@ -74,6 +74,7 @@ function PopConfirmPortal({
     <AntdPopconfirm
       {...extraProps}
       {...popConfirmProps}
+      ref={ref}
       visible={reference ? popConfirmProps.visible : false}
     >
       {triggerDOM}
