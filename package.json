@@ -29,6 +29,7 @@
     ]
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.5",
     "ahooks": "^3.6.2",
     "classnames": "^2.3.1",
     "react-popper": "^2.3.0"
