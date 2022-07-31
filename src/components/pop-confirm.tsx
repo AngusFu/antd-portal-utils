@@ -28,7 +28,7 @@ export default function PopConfirm({ reference, ...restProps }: PopConfirmProps)
       ...restProps,
     },
     hackGetPopupContainer: false,
-    afterVisibleChangeType: 'afterClose',
+    afterVisibleChangeType: 'afterVisibleChange',
   });
 
   const triggerDOM = useFakeTrigger(popConfirmProps);
