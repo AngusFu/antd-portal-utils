@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import type { ImageProps } from 'antd';
 import Button from 'antd/es/button';
 import Image from 'antd/es/image';
-import 'antd/es/button/style';
-import 'antd/es/image/style';
+import 'antd/dist/antd.css';
 
 import { createPortalUtil } from 'antd-portal-utils';
 

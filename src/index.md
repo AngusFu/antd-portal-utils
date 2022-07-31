@@ -14,6 +14,33 @@ This is inspired by the `Modal.useModal` API in [Ant Design](<https://ant-design
 
 <code src="./demo/use-portal-with-ctx.tsx" />
 
+<br />
+
+### For Mac users
+
+<Alert type="warning">
+  If you met a unexpected shifting of the position of the Popconfirm component, it's NOT caused by this library.
+  <br />
+  <br />
+  Checkout this <a href="https://codesandbox.io/s/antd-portal-utils-demo-r9t1hc" target="_blank" rel="noopener noreferrer">codesandbox</a>, you'll see everything fine.
+  <br />
+  <br />
+  The following example from antd official website also have the same issue.
+</Alert>
+
+```tsx
+import { Popconfirm } from 'antd';
+import React from 'react';
+
+const App: React.FC = () => (
+  <Popconfirm title="Are you sure？" okText="Yes" cancelText="No">
+    <a href="#">Delete</a>
+  </Popconfirm>
+);
+
+export default App;
+```
+
 ## createPortalUtil
 
 Use `createPortalUtil` to create global shared portal methods and context holder.

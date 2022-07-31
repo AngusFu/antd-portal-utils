@@ -3,12 +3,7 @@ import React, { createContext } from 'react';
 import { usePortal, Drawer, Modal } from 'antd-portal-utils';
 
 import { Button, Space } from 'antd';
-
-import 'antd/es/button/style';
-import 'antd/es/drawer/style';
-import 'antd/es/modal/style';
-import 'antd/es/popconfirm/style';
-import 'antd/es/space/style';
+import 'antd/dist/antd.css';
 
 const ReachableContext = createContext<string | null>(null);
 const UnreachableContext = createContext<string | null>(null);
