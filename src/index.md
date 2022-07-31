@@ -1,4 +1,4 @@
-# antd-portal-utils
+# Usage
 
 ## Install
 
@@ -6,9 +6,7 @@
 npm install antd-portal-utils
 ```
 
-## API
-
-### usePortal
+## usePortal
 
 Use `usePortal` to get contextHolder with context accessible issue.
 
@@ -16,7 +14,7 @@ This is inspired by the `Modal.useModal` API in [Ant Design](<https://ant-design
 
 <code src="./demo/use-portal-with-ctx.tsx" />
 
-### createPortalUtil
+## createPortalUtil
 
 Use `createPortalUtil` to create global shared portal methods and context holder.
 
@@ -27,19 +25,14 @@ For example:
 
 import { createPortalUtil } from 'antd-portal-utils';
 
-const { contextHolder, methods } = createPortalUtil(
-  // A unique key generator is required.
-  () => Math.random(),
-);
-const { openPortal } = methods;
+// A unique key generator is required.
+const { contextHolder, methods } = createPortalUtil(() => Math.random());
+const { openPortal, openPopConfirm } = methods;
 
-export { contextHolder, openPortal };
+export { contextHolder, openPortal, openPopConfirm };
 
 // --------------------------------------------------------
 // file: src/App.tsx
-import React from 'react';
-import { contextHolder } from '@/utils';
-
 export default function App() {
   return (
     <Layout>
@@ -48,30 +41,8 @@ export default function App() {
     </Layout>
   );
 }
-
-// --------------------------------------------------------
-// file: src/pages/some-page.tsx
-import React from 'react';
-import { Modal } from 'antd-portal-utils';
-import { openPortal } from '@/utils';
-
-export default function App() {
-  const handleOpenModal = () => {
-    const { close, update } = openPortal(
-      <Modal
-        visible={true}
-        title="ABC"
-        onCancel={() => close()}
-        onConfirm={() => update({ title: 'XYZ' })}
-        {...otherProps}
-      />,
-    );
-  };
-
-  return (
-    <div>
-      <button onClick={handleOpenModal}>Open Modal</button>
-    </div>
-  );
-}
 ```
+
+#### Demo: previewImage
+
+<code src="./demo/preview-image.tsx" />

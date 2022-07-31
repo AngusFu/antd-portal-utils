@@ -44,7 +44,7 @@ export default function Demo() {
         <br />
         <Button
           style={{ margin: '400px 0 500px' }}
-          onClick={(e) => handleOpenPopConfirm(e.target as HTMLButtonElement)}
+          onClick={(e) => handleOpenPopConfirm(e.currentTarget as HTMLButtonElement)}
         >
           Open PopConfirm
         </Button>
@@ -98,7 +98,7 @@ export default function Demo() {
 
         <Button onClick={handleOpenModal}>Open Modal</Button>
 
-        <Button onClick={(e) => handleOpenPopConfirm(e.target as HTMLButtonElement)}>
+        <Button onClick={(e) => handleOpenPopConfirm(e.currentTarget as HTMLButtonElement)}>
           Open PopConfirm
         </Button>
       </Space>
