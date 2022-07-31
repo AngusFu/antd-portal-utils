@@ -50,15 +50,17 @@ function previewImage(props: ImageProps): Promise<void>;
 function previewImage(props: ImageProps[], defaultIndex?: number): Promise<void>;
 function previewImage(props: any, defaultIndex?: any) {
   return new Promise<void>((resolve) => {
-    const handle = utils.openPortal(
-      <ImagePreview
-        data={Array.isArray(props) ? [...props] : [props]}
-        current={defaultIndex || 0}
-        onClose={() => {
-          handle.close();
-          resolve();
-        }}
-      />,
+    const { close } = utils.openPortal(
+      <span style={{ display: 'none' }}>
+        <ImagePreview
+          data={Array.isArray(props) ? [...props] : [props]}
+          current={defaultIndex || 0}
+          afterClose={() => {
+            close();
+            resolve();
+          }}
+        />
+      </span>,
     );
   });
 }
@@ -66,11 +68,11 @@ function previewImage(props: any, defaultIndex?: any) {
 function ImagePreview({
   data,
   current,
-  onClose,
+  afterClose,
 }: {
   data: ImageProps[];
   current?: number;
-  onClose?: () => void;
+  afterClose?: () => void;
 }) {
   const [visible, setVisible] = useState(true);
 
@@ -79,21 +81,20 @@ function ImagePreview({
     current,
     onVisibleChange: (value: boolean) => {
       setVisible(value);
-
-      if (!value) {
-        onClose?.();
-      }
+    },
+    afterClose() {
+      afterClose?.();
     },
   };
 
   if (data.length === 1) {
-    return <Image {...data[0]} style={{ display: 'none' }} preview={preview} />;
+    return <Image {...data[0]} preview={preview} />;
   }
 
   return (
     <Image.PreviewGroup preview={preview}>
       {data.map((props, i) => (
-        <Image {...props} style={{ display: 'none' }} key={i} />
+        <Image {...props} key={i} />
       ))}
     </Image.PreviewGroup>
   );
