@@ -37,7 +37,7 @@ export default function PopConfirm({ reference, ...restProps }: PopConfirmProps)
   const overlayUniqClass = `overlay-${ctxKey}`;
   const triggerUniqClass = `trigger-${ctxKey}`;
   useClickAway(
-    (e) => ctxMethods?.closePortal({ key: ctxKey }),
+    () => ctxMethods?.closePortal({ key: ctxKey }),
     [
       () => document.querySelector(`.${triggerUniqClass}`),
       () => document.querySelector(`.${overlayUniqClass}`),
