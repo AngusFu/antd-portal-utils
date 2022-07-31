@@ -8,6 +8,7 @@ export default defineConfig({
   outputPath: 'docs-dist',
   base: '/antd-portal-utils',
   publicPath: '/antd-portal-utils/',
+  hash: true,
   // more config: https://d.umijs.org/config
   mfsu: {},
   webpack5: {},
