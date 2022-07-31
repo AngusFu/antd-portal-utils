@@ -1,21 +1,37 @@
-import { CSSProperties, RefObject, useContext } from 'react';
+import { CSSProperties, forwardRef, MutableRefObject, RefObject, useContext } from 'react';
 import React, { useRef, useState } from 'react';
 
 import { useClickAway, useEventListener, useUnmount } from 'ahooks';
 import ConfigProvider from 'antd/es/config-provider';
 import type { PopconfirmProps } from 'antd/es/popconfirm';
-import Popconfirm from 'antd/es/popconfirm';
+import AntdPopconfirm from 'antd/es/popconfirm';
 import { usePopper } from 'react-popper';
 
 import { HOOK_POPUP_CONTAINER_CLASS, useAntdPortalProps } from '../hooks';
 import classNames from 'classnames';
-import { usePortalCtxMethodsInternalUseOnly } from '../internals';
+import { usePortalCtxKeyInternalUseOnly, usePortalCtxMethodsInternalUseOnly } from '../internals';
 
-export type PopConfirmProps = PopconfirmProps & {
-  reference: HTMLElement;
-};
+export default /* #__PURE__*/ forwardRef(function Popconfirm(
+  props: PopconfirmProps,
+  ref: React.Ref<unknown>,
+) {
+  const ctxKey = usePortalCtxKeyInternalUseOnly();
 
-export default function PopConfirm({ reference, ...restProps }: PopConfirmProps) {
+  if (ctxKey) {
+    return <PopConfirmPortal {...props} refElemRef={ref as MutableRefObject<any>} />;
+  }
+
+  return <AntdPopconfirm {...props} ref={ref} />;
+});
+
+function PopConfirmPortal({
+  refElemRef,
+  ...props
+}: PopconfirmProps & {
+  refElemRef: MutableRefObject<unknown>;
+}) {
+  const reference = refElemRef.current as HTMLElement;
+
   // handle resize
   const ref = useRef<any>();
   usePopupForceAlign(ref);
@@ -24,15 +40,17 @@ export default function PopConfirm({ reference, ...restProps }: PopConfirmProps)
   const { ctxKey, props: popConfirmProps } = useAntdPortalProps({
     props: {
       visible: true,
-      reference,
-      ...restProps,
+      ...props,
     },
     hackGetPopupContainer: false,
     afterVisibleChangeType: 'afterVisibleChange',
   });
 
-  const triggerDOM = useFakeTrigger(popConfirmProps);
-  const getPopupContainer = usePopupContainerMethod(popConfirmProps);
+  const triggerDOM = useFakeTrigger({
+    ...popConfirmProps,
+    reference,
+  });
+  const getPopupContainer = usePopupContainerMethod({ reference });
 
   const overlayUniqClass = `overlay-${ctxKey}`;
   const triggerUniqClass = `trigger-${ctxKey}`;
@@ -46,10 +64,6 @@ export default function PopConfirm({ reference, ...restProps }: PopConfirmProps)
     'click',
   );
 
-  if (!ctxKey) {
-    return null;
-  }
-
   const extraProps = {
     getPopupContainer,
     openClassName: classNames(triggerUniqClass, popConfirmProps.openClassName),
@@ -57,13 +71,17 @@ export default function PopConfirm({ reference, ...restProps }: PopConfirmProps)
   };
 
   return (
-    <Popconfirm ref={ref} {...popConfirmProps} {...extraProps}>
+    <AntdPopconfirm
+      {...extraProps}
+      {...popConfirmProps}
+      visible={reference ? popConfirmProps.visible : false}
+    >
       {triggerDOM}
-    </Popconfirm>
+    </AntdPopconfirm>
   );
 }
 
-function useFakeTrigger({ visible, reference }: { visible?: boolean; reference: HTMLElement }) {
+function useFakeTrigger({ visible, reference }: { visible?: boolean; reference?: HTMLElement }) {
   const [popperElem, setPopperElem] = useState<HTMLElement | null>(null);
   const popper = usePopper(reference, popperElem, { placement: 'top-start' });
 
@@ -110,11 +128,11 @@ function usePopupForceAlign(ref: RefObject<any>) {
   useUnmount(() => window.clearTimeout(timerRef.current));
 }
 
-function usePopupContainerMethod({ reference }: { reference: HTMLElement }) {
+function usePopupContainerMethod({ reference }: { reference?: HTMLElement }) {
   const config = useContext(ConfigProvider.ConfigContext);
 
   return function getPopupContainer(node: any) {
-    const closestDrawer = reference.closest(`.${HOOK_POPUP_CONTAINER_CLASS}`);
+    const closestDrawer = reference?.closest(`.${HOOK_POPUP_CONTAINER_CLASS}`);
 
     if (closestDrawer) {
       return closestDrawer as HTMLDivElement;

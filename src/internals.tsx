@@ -14,9 +14,6 @@ import React, {
   useState,
 } from 'react';
 
-import type { PopConfirmProps } from './components/pop-confirm';
-import PopConfirm from './components/pop-confirm';
-
 // use '' instead of null, stop context looking up
 const keyCtx = createContext<Key>('');
 const methodCtx = createContext<PortalMethods | ''>('');
@@ -65,15 +62,11 @@ export function createPortalUtil(keyGenerator: () => Key) {
         ),
     };
   };
-  const openPopConfirm = function (popConfirmProps: PopConfirmProps) {
-    return openPortal(PopConfirm, popConfirmProps);
-  };
 
   return {
     contextHolder: <PortalsHolder methodsRef={methodsRef} />,
     methods: {
       openPortal,
-      openPopConfirm,
     },
   };
 }

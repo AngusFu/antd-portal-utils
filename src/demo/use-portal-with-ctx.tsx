@@ -1,6 +1,6 @@
-import React, { createContext } from 'react';
+import React, { createContext, useRef } from 'react';
 
-import { usePortal, Drawer, Modal } from 'antd-portal-utils';
+import { usePortal, Drawer, Modal, PopConfirm } from 'antd-portal-utils';
 
 import { Button, Space } from 'antd';
 import 'antd/dist/antd.css';
@@ -56,13 +56,15 @@ export default function Demo() {
   };
 
   const handleOpenPopConfirm = async function (el: HTMLElement) {
-    const { close, update } = util.openPopConfirm({
-      title: 'Confirm to delete?',
-      reference: el,
-      overlayStyle: { width: 300 },
-      placement: 'topRight',
-      onCancel: () => close(),
-    });
+    const { close, update } = util.openPortal(
+      <PopConfirm
+        ref={{ current: el }} // HACK
+        title="Confirm to delete?"
+        overlayStyle={{ width: 300 }}
+        placement="topRight"
+        onCancel={() => close()}
+      />,
+    );
 
     const scheduleNext = (action: () => Promise<any>) =>
       new Promise<any>((resolve, reject) => {
