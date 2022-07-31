@@ -5,7 +5,12 @@ import { createPortalUtil } from './internals';
 export * from './hooks';
 export { Drawer, Modal, PopConfirm } from './components';
 
-export type { OpenPortalResult, OpenPortalType } from './internals';
+export type {
+  OpenPortalResult,
+  OpenPortalType,
+  OpenPopConfirmResult,
+  OpenPopConfirmType,
+} from './internals';
 export { createPortalUtil };
 
 export function usePortal(keyGenerator?: () => Key) {

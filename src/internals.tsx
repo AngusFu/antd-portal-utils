@@ -1,4 +1,12 @@
-import type { ComponentType, Key, PropsWithChildren, ReactElement, ReactNode, Ref } from 'react';
+import type {
+  ComponentType,
+  Key,
+  PropsWithChildren,
+  ReactElement,
+  ReactNode,
+  Ref,
+  RefObject,
+} from 'react';
 import React, {
   cloneElement,
   createContext,
@@ -63,10 +71,17 @@ export function createPortalUtil(keyGenerator: () => Key) {
     };
   };
 
+  const openPopConfirm: OpenPopConfirmType = function (el: any, content: any, props?: any) {
+    const ref = Object.freeze({ current: el }) as RefObject<unknown>;
+
+    return openPortal(content, { ...props, ref });
+  };
+
   return {
     contextHolder: <PortalsHolder methodsRef={methodsRef} />,
     methods: {
       openPortal,
+      openPopConfirm,
     },
   };
 }
@@ -75,6 +90,16 @@ export type OpenPortalType = {
   (content: JSX.Element): OpenPortalResult<any>;
   <P>(content: ComponentType<P>, props?: Partial<P>): OpenPortalResult<P>;
 };
+
+export type OpenPopConfirmType = {
+  <E extends HTMLElement>(reference: E, content: JSX.Element): OpenPopConfirmResult<any>;
+  <E extends HTMLElement, P>(
+    reference: E,
+    content: ComponentType<P>,
+    props?: Partial<P>,
+  ): OpenPopConfirmResult<P>;
+};
+export type OpenPopConfirmResult<P = any> = OpenPortalResult<P>;
 
 export type OpenPortalResult<P = any> = {
   close: () => void;

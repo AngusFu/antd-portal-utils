@@ -1,4 +1,4 @@
-import { CSSProperties, forwardRef, MutableRefObject, RefObject, useContext } from 'react';
+import { CSSProperties, forwardRef, MutableRefObject, Ref, RefObject, useContext } from 'react';
 import React, { useRef, useState } from 'react';
 
 import { useClickAway, useEventListener, useUnmount } from 'ahooks';
@@ -13,7 +13,7 @@ import { usePortalCtxKeyInternalUseOnly, usePortalCtxMethodsInternalUseOnly } fr
 
 export default /* #__PURE__*/ forwardRef(function Popconfirm(
   props: PopconfirmProps,
-  ref: React.Ref<unknown>,
+  ref?: Ref<unknown>,
 ) {
   const ctxKey = usePortalCtxKeyInternalUseOnly();
 

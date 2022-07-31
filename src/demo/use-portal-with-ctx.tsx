@@ -30,10 +30,10 @@ async function request(index: number) {
 }
 
 export default function Demo() {
-  const [util, contextHolder] = usePortal();
+  const [{ openPortal, openPopConfirm }, contextHolder] = usePortal();
 
   const handleOpenDrawer = function () {
-    const { close } = util.openPortal(
+    const { close } = openPortal(
       <Drawer visible={true} title="Hello World" onClose={() => close()}>
         {content}
         <br />
@@ -48,7 +48,7 @@ export default function Demo() {
   };
 
   const handleOpenModal = function () {
-    const { close } = util.openPortal(
+    const { close } = openPortal(
       <Modal visible={true} onCancel={() => close()}>
         {content}
       </Modal>,
@@ -56,9 +56,10 @@ export default function Demo() {
   };
 
   const handleOpenPopConfirm = async function (el: HTMLElement) {
-    const { close, update } = util.openPortal(
+    // NOTE the difference
+    const { close, update } = openPopConfirm(
+      el,
       <PopConfirm
-        ref={{ current: el }} // HACK
         title="Confirm to delete?"
         overlayStyle={{ width: 300 }}
         placement="topRight"
