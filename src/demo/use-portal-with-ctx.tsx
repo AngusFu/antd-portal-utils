@@ -21,6 +21,19 @@ const content = (
   </>
 );
 
+function wait(t: number) {
+  return new Promise((resolve) => setTimeout(resolve, 500));
+}
+async function request(index: number) {
+  await wait(500);
+
+  if (index % 2 === 0) {
+    throw new Error('Please Retry');
+  }
+
+  return { data: 'Ok' };
+}
+
 export default function Demo() {
   const [util, contextHolder] = usePortal();
 
@@ -47,16 +60,35 @@ export default function Demo() {
     );
   };
 
-  const handleOpenPopConfirm = function (el: HTMLElement) {
-    const { close } = util.openPopConfirm({
-      title: 'Hello World',
+  const handleOpenPopConfirm = async function (el: HTMLElement) {
+    const { close, update } = util.openPopConfirm({
+      title: 'Confirm to delete?',
       reference: el,
+      overlayStyle: { width: 300 },
+      placement: 'topRight',
       onCancel: () => close(),
-      onConfirm: () =>
-        new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
-          close();
-        }),
     });
+
+    const scheduleNext = (action: () => Promise<any>) =>
+      new Promise<any>((resolve, reject) => {
+        update({
+          onConfirm: async () => {
+            try {
+              resolve(await action());
+              close();
+            } catch (e: any) {
+              reject(e);
+            }
+          },
+        });
+      });
+
+    try {
+      await scheduleNext(() => request(0));
+    } catch (e: any) {
+      update({ title: e.message });
+      await scheduleNext(() => request(1));
+    }
   };
 
   return (
