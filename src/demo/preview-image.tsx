@@ -5,7 +5,7 @@ import Button from 'antd/es/button';
 import Image from 'antd/es/image';
 import 'antd/dist/antd.css';
 
-import { createPortalUtil } from 'antd-portal-utils';
+import { createPortalUtil, useAntdPortalProps } from 'antd-portal-utils';
 
 const { contextHolder, methods: utils } = createPortalUtil(() => Date.now());
 
@@ -75,17 +75,16 @@ function ImagePreview({
   afterClose?: () => void;
 }) {
   const [visible, setVisible] = useState(true);
-
-  const preview = {
-    visible,
-    current,
-    onVisibleChange: (value: boolean) => {
-      setVisible(value);
+  const { props: preview } = useAntdPortalProps({
+    props: {
+      current,
+      visible,
+      afterClose,
+      onVisibleChange: setVisible,
     },
-    afterClose() {
-      afterClose?.();
-    },
-  };
+    hackGetPopupContainer: false,
+    afterVisibleChangeType: 'afterClose',
+  });
 
   if (data.length === 1) {
     return <Image {...data[0]} preview={preview} />;
