@@ -7,6 +7,7 @@ export function withAntdPortalUtilsAdaptor<T extends ComponentType<any>>(
   Comp: T,
   config?: {
     shouldHackGetPopupContainer?: boolean;
+    afterVisibleChangeType?: 'afterVisibleChange' | 'afterClose';
   },
 ) {
   const Modified = function (props: unknown) {
@@ -15,6 +16,7 @@ export function withAntdPortalUtilsAdaptor<T extends ComponentType<any>>(
     const { ctxKey, props: portalProps } = useAntdPortalProps({
       props: props as any,
       hackGetPopupContainer: hackPopup,
+      afterVisibleChangeType: config?.afterVisibleChangeType,
     });
 
     if (ctxKey) {

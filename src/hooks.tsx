@@ -15,8 +15,9 @@ export const HOOK_POPUP_CONTAINER_CLASS = '__container_for_getPopupContainer__';
 export function useAntdPortalProps<P extends PropsWithChildren<{ visible?: boolean }>>(option: {
   props: P;
   hackGetPopupContainer?: boolean;
+  afterVisibleChangeType?: 'afterVisibleChange' | 'afterClose';
 }): { props: P; ctxKey: Key } {
-  const { props, hackGetPopupContainer } = option;
+  const { props, hackGetPopupContainer, afterVisibleChangeType } = option;
   const { visible: propVisible, children } = props;
 
   const ctxKey = usePortalCtxKeyInternalUseOnly();
@@ -52,28 +53,33 @@ export function useAntdPortalProps<P extends PropsWithChildren<{ visible?: boole
     newChild = <CtxResetInternalUseOnly>{children}</CtxResetInternalUseOnly>;
   }
 
+  const callbacks = {
+    afterClose(...args: any[]) {
+      try {
+        (props as unknown as any).afterClose?.(...args);
+      } finally {
+        afterVisibilityChange(false);
+      }
+    },
+    // drawer & pop-confirm
+    afterVisibleChange(v: boolean) {
+      try {
+        (props as unknown as any).afterVisibleChange?.(v);
+      } finally {
+        afterVisibilityChange(v);
+      }
+    },
+  };
+
+  const cbType = afterVisibleChangeType ?? 'afterVisibleChange';
+
   return {
     ctxKey,
     props: {
       ...props,
       visible,
       children: newChild,
-      // modal
-      afterClose(...args: any[]) {
-        try {
-          (props as unknown as any).afterClose?.(...args);
-        } finally {
-          afterVisibilityChange(false);
-        }
-      },
-      // drawer
-      afterVisibleChange(v: boolean) {
-        try {
-          (props as unknown as any).afterVisibleChange?.(v);
-        } finally {
-          afterVisibilityChange(v);
-        }
-      },
+      [cbType]: callbacks[cbType],
     },
   };
 }
