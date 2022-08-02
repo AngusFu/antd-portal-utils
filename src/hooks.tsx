@@ -12,11 +12,26 @@ import {
 
 export const HOOK_POPUP_CONTAINER_CLASS = '__container_for_getPopupContainer__';
 
-export function useAntdPortalProps<P extends PropsWithChildren<{ visible?: boolean }>>(option: {
+type CallbackResult<T extends 'afterVisibleChange' | 'afterClose'> = T extends 'afterClose'
+  ? (...args: any[]) => void
+  : T extends 'afterVisibleChange'
+  ? (visible: boolean) => void
+  : null;
+
+export function useAntdPortalProps<
+  P extends PropsWithChildren<{ visible?: boolean }>,
+  V extends 'afterVisibleChange' | 'afterClose' = 'afterVisibleChange',
+>(option: {
   props: P;
   hackGetPopupContainer?: boolean;
-  afterVisibleChangeType?: 'afterVisibleChange' | 'afterClose';
-}): { props: P; ctxKey: Key } {
+  afterVisibleChangeType?: V;
+}): {
+  ctxKey: Key;
+  props: P & {
+    visible: boolean;
+    children: JSX.Element;
+  } & CallbackResult<V>;
+} {
   const { props, hackGetPopupContainer, afterVisibleChangeType } = option;
   const { visible: propVisible, children } = props;
 
@@ -70,15 +85,15 @@ export function useAntdPortalProps<P extends PropsWithChildren<{ visible?: boole
     },
   };
 
-  const cbType = afterVisibleChangeType ?? 'afterVisibleChange';
-
+  const cbType = (afterVisibleChangeType ?? 'afterVisibleChange') as V;
+  const cbData = { [cbType]: callbacks[cbType] } as unknown as CallbackResult<V>;
   return {
     ctxKey,
     props: {
       ...props,
+      ...cbData,
       visible,
       children: childrenWrapped,
-      [cbType]: callbacks[cbType],
     },
   };
 }
