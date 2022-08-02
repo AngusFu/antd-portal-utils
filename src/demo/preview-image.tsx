@@ -40,8 +40,6 @@ export function Page() {
       >
         preview images
       </Button>
-
-      {contextHolder}
     </div>
   );
 }
@@ -83,6 +81,7 @@ function ImagePreview({
       onVisibleChange: setVisible,
     },
     hackGetPopupContainer: false,
+    // TODO after close won't work
     afterVisibleChangeType: 'afterClose',
   });
 

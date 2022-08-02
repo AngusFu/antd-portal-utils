@@ -69,7 +69,3 @@ export default function App() {
   );
 }
 ```
-
-#### Demo: previewImage
-
-<code src="./demo/preview-image.tsx" />
