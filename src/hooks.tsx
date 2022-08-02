@@ -21,7 +21,6 @@ export function useAntdPortalProps<P extends PropsWithChildren<{ visible?: boole
   const { visible: propVisible, children } = props;
 
   const ctxKey = usePortalCtxKeyInternalUseOnly();
-  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const [visible, setVisible, afterVisibilityChange] = useCustomVisibilityControl(
     ctxKey ? false : Boolean(propVisible),
@@ -34,11 +33,11 @@ export function useAntdPortalProps<P extends PropsWithChildren<{ visible?: boole
     [propVisible, setVisible],
   );
 
-  let newChild: ReactNode;
-  if (hackGetPopupContainer) {
-    newChild = (
-      <CtxResetInternalUseOnly>
-        <ConfigProvider getPopupContainer={(node) => containerRef.current || document.body}>
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const childrenWrapped = (
+    <CtxResetInternalUseOnly>
+      <ConfigProvider getPopupContainer={(node) => containerRef.current || document.body}>
+        {hackGetPopupContainer ? (
           <div
             ref={containerRef}
             style={{ position: 'relative' }}
@@ -46,12 +45,12 @@ export function useAntdPortalProps<P extends PropsWithChildren<{ visible?: boole
           >
             {children}
           </div>
-        </ConfigProvider>
-      </CtxResetInternalUseOnly>
-    );
-  } else {
-    newChild = <CtxResetInternalUseOnly>{children}</CtxResetInternalUseOnly>;
-  }
+        ) : (
+          children
+        )}
+      </ConfigProvider>
+    </CtxResetInternalUseOnly>
+  );
 
   const callbacks = {
     afterClose(...args: any[]) {
@@ -78,7 +77,7 @@ export function useAntdPortalProps<P extends PropsWithChildren<{ visible?: boole
     props: {
       ...props,
       visible,
-      children: newChild,
+      children: childrenWrapped,
       [cbType]: callbacks[cbType],
     },
   };

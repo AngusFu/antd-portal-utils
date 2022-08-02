@@ -1,37 +1,34 @@
-import React, { ComponentType } from 'react';
-import ConfigProvider from 'antd/es/config-provider';
+import React from 'react';
+import AntdDrawer from 'antd/es/drawer';
+import AntdModal from 'antd/es/modal';
 
 import { useAntdPortalProps } from '../hooks';
 
-export function withAntdPortalUtilsAdaptor<T extends ComponentType<any>>(
+type CompTypes = typeof AntdDrawer | typeof AntdModal;
+
+export function withAntdPortalUtilsAdaptor<T extends CompTypes>(
   Comp: T,
   config?: {
-    shouldHackGetPopupContainer?: boolean;
+    hackGetPopupContainer?: boolean;
     afterVisibleChangeType?: 'afterVisibleChange' | 'afterClose';
   },
 ) {
   const Modified = function (props: unknown) {
-    const hackPopup = config?.shouldHackGetPopupContainer ?? true;
-
+    const hackPopup = config?.hackGetPopupContainer ?? true;
     const { ctxKey, props: portalProps } = useAntdPortalProps({
       props: props as any,
-      hackGetPopupContainer: hackPopup,
       afterVisibleChangeType: config?.afterVisibleChangeType,
+      hackGetPopupContainer: (props as any).__hack_popup_container__ ?? hackPopup,
     });
+    const propsGetContainer = (props as any).getContainer;
 
-    if (ctxKey) {
-      return <Comp {...portalProps} key={ctxKey} />;
-    }
-
-    if (hackPopup) {
-      return (
-        <ConfigProvider getPopupContainer={() => document.body}>
-          <Comp {...portalProps} />
-        </ConfigProvider>
-      );
-    }
-
-    return <Comp {...portalProps} />;
+    return (
+      <Comp
+        {...portalProps}
+        key={ctxKey || undefined}
+        getContainer={ctxKey ? propsGetContainer || (() => document.body) : propsGetContainer}
+      />
+    );
   };
 
   cloneProperties(Comp, Modified);

@@ -31,6 +31,7 @@ async function request(index: number) {
 
 export default function Demo() {
   const [{ openPortal, openPopConfirm }, contextHolder] = usePortal();
+  const [childPortalUtil, childPortalContextHolder] = usePortal();
 
   const handleOpenDrawer = function () {
     const { close } = openPortal(
@@ -38,11 +39,29 @@ export default function Demo() {
         {content}
         <br />
         <Button
-          style={{ margin: '400px 0 500px' }}
+          style={{ margin: '200px 0 200px' }}
           onClick={(e) => handleOpenPopConfirm(e.currentTarget as HTMLButtonElement)}
         >
           Open PopConfirm
         </Button>
+
+        <br />
+        <br />
+
+        <Button
+          style={{ margin: '0 0 100vh' }}
+          onClick={(e) => {
+            const { close } = childPortalUtil.openPortal(
+              <Drawer visible onClose={() => close()} getContainer={() => document.body}>
+                Hi there
+              </Drawer>,
+            );
+          }}
+        >
+          Open Child Drawer
+        </Button>
+
+        {childPortalContextHolder}
       </Drawer>,
     );
   };
