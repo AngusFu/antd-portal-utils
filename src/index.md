@@ -69,3 +69,29 @@ export default function App() {
   );
 }
 ```
+
+## Hacks
+
+You can use [babel-plugin-library-aliases](https://github.com/AngusFu/babel-plugin-library-aliases) to override the `Modal` and `Drawer` components.
+
+```js
+// in your babel.config.js:
+
+module.exports{
+  // ... other fields
+  plugins: [
+    // ... other plugins
+    [
+      'babel-plugin-library-aliases',
+      {
+        'antd': {
+          aliases: {
+            Modal: 'antd-portal-utils#Modal',
+            Drawer: 'antd-portal-utils#Drawer',
+          }
+        }
+      }
+    ]
+  ];
+}
+```

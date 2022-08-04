@@ -1,33 +1,13 @@
 # antd-portal-utils
 
-## Getting Started
+Hacks on antd components.
 
-Install dependencies,
-
-```bash
-$ npm i
-```
-
-Start the dev server,
+## Install
 
 ```bash
-$ npm start
+npm i antd-portal-utils
 ```
 
-Build documentation,
+## Documentation
 
-```bash
-$ npm run docs:build
-```
-
-Run test,
-
-```bash
-$ npm test
-```
-
-Build library via `father`,
-
-```bash
-$ npm run build
-```
+[Check out the documentation](https://angusfu.github.io/antd-portal-utils).
