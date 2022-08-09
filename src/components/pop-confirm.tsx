@@ -37,7 +37,10 @@ function PopConfirmPortal({
   usePopupForceAlign(ref);
 
   const ctxMethods = usePortalCtxMethodsInternalUseOnly();
-  const { ctxKey, props: popConfirmProps } = useAntdPortalProps({
+  const {
+    ctxKey,
+    props: { afterVisibleChange, ...popConfirmProps },
+  } = useAntdPortalProps({
     props: {
       visible: true,
       ...props,
@@ -45,6 +48,7 @@ function PopConfirmPortal({
     hackGetPopupContainer: false,
     afterVisibleChangeType: 'afterVisibleChange',
   });
+  const realVisible = reference ? popConfirmProps.visible : false;
 
   const triggerDOM = useFakeTrigger({
     ...popConfirmProps,
@@ -64,12 +68,26 @@ function PopConfirmPortal({
     'click',
   );
 
+  // HACK `afterVisibleChange` issue
+  // SEE https://github.com/ant-design/ant-design/issues/28151
+  useEventListener(
+    'animationend',
+    (e: AnimationEvent) => {
+      if (e.currentTarget === e.target) {
+        afterVisibleChange?.(realVisible);
+      }
+    },
+    {
+      target: () => document.querySelector(`.${overlayUniqClass}`),
+    },
+  );
+
   return (
     <AntdPopconfirm
       {...popConfirmProps}
       ref={ref}
       getPopupContainer={getPopupContainer}
-      visible={reference ? popConfirmProps.visible : false}
+      visible={realVisible}
       openClassName={classNames(triggerUniqClass, popConfirmProps.openClassName)}
       overlayClassName={classNames(overlayUniqClass, popConfirmProps.overlayClassName)}
     >
