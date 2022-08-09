@@ -64,18 +64,14 @@ function PopConfirmPortal({
     'click',
   );
 
-  const extraProps = {
-    getPopupContainer,
-    openClassName: classNames(triggerUniqClass, popConfirmProps.openClassName),
-    overlayClassName: classNames(overlayUniqClass, popConfirmProps.overlayClassName),
-  };
-
   return (
     <AntdPopconfirm
-      {...extraProps}
       {...popConfirmProps}
       ref={ref}
+      getPopupContainer={getPopupContainer}
       visible={reference ? popConfirmProps.visible : false}
+      openClassName={classNames(triggerUniqClass, popConfirmProps.openClassName)}
+      overlayClassName={classNames(overlayUniqClass, popConfirmProps.overlayClassName)}
     >
       {triggerDOM}
     </AntdPopconfirm>
