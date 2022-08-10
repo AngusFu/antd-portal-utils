@@ -11,6 +11,24 @@ import { HOOK_POPUP_CONTAINER_CLASS, useAntdPortalProps } from '../hooks';
 import classNames from 'classnames';
 import { usePortalCtxKeyInternalUseOnly, usePortalCtxMethodsInternalUseOnly } from '../internals';
 
+let isConnected = function (node: Node) {
+  // SEE https://github.com/ungap/is-connected
+  if (!('isConnected' in Node.prototype)) {
+    Object.defineProperty(Node.prototype, 'isConnected', {
+      configurable: true,
+      get: function () {
+        return !(
+          this.ownerDocument.compareDocumentPosition(this) & this.DOCUMENT_POSITION_DISCONNECTED
+        );
+      },
+    });
+  }
+
+  isConnected = (node: Node) => node.isConnected;
+
+  return node.isConnected;
+};
+
 export default /* #__PURE__*/ forwardRef(function Popconfirm(
   props: PopconfirmProps,
   ref?: Ref<unknown>,
@@ -48,7 +66,8 @@ function PopConfirmPortal({
     hackGetPopupContainer: false,
     afterVisibleChangeType: 'afterVisibleChange',
   });
-  const realVisible = reference ? popConfirmProps.visible : false;
+  const isReferenceValid = reference && isConnected(reference);
+  const realVisible = isReferenceValid ? popConfirmProps.visible : false;
 
   const triggerDOM = useFakeTrigger({
     ...popConfirmProps,
@@ -81,6 +100,10 @@ function PopConfirmPortal({
       target: () => document.querySelector(`.${overlayUniqClass}`),
     },
   );
+
+  if (!isReferenceValid) {
+    return null;
+  }
 
   return (
     <AntdPopconfirm
