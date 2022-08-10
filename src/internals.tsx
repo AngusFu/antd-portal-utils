@@ -102,7 +102,7 @@ export type OpenPopConfirmType = {
 export type OpenPopConfirmResult<P = any> = OpenPortalResult<P>;
 
 export type OpenPortalResult<P = any> = {
-  close: () => void;
+  close: (force?: boolean) => void;
   update: (props: Partial<P>) => void;
 };
 
