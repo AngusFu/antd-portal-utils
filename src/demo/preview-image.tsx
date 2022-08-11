@@ -1,99 +1,40 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import type { ImageProps } from 'antd';
-import Button from 'antd/es/button';
-import Image from 'antd/es/image';
+import { ImagePreview, usePortal } from 'antd-portal-utils';
+
+import { Button } from 'antd';
 import 'antd/dist/antd.css';
 
-import { createPortalUtil, useAntdPortalProps } from 'antd-portal-utils';
+export default function Demo() {
+  const [utils, contextHolder] = usePortal();
 
-const { contextHolder, methods: utils } = createPortalUtil(() => Date.now());
+  const handlePreview = function () {
+    utils.openPortal(
+      <ImagePreview
+        data={[
+          {
+            src: 'https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp',
+          },
+          {
+            src: 'https://gw.alipayobjects.com/zos/antfincdn/cV16ZqzMjW/photo-1473091540282-9b846e7965e3.webp',
+          },
+          {
+            src: 'https://gw.alipayobjects.com/zos/antfincdn/x43I27A55%26/photo-1438109491414-7198515b166b.webp',
+          },
+        ]}
+        current={1}
+        afterVisibleChange={(v) => {
+          console.log(v);
+        }}
+      />,
+    );
+  };
 
-export default function App() {
   return (
     <div>
-      <h1>Hello world</h1>
-      <Page />
+      <Button onClick={handlePreview}>preview images</Button>
 
       {contextHolder}
     </div>
-  );
-}
-
-export function Page() {
-  return (
-    <div>
-      <Button
-        onClick={() =>
-          previewImage([
-            {
-              src: 'https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp',
-            },
-            {
-              src: 'https://gw.alipayobjects.com/zos/antfincdn/cV16ZqzMjW/photo-1473091540282-9b846e7965e3.webp',
-            },
-            {
-              src: 'https://gw.alipayobjects.com/zos/antfincdn/x43I27A55%26/photo-1438109491414-7198515b166b.webp',
-            },
-          ])
-        }
-      >
-        preview images
-      </Button>
-    </div>
-  );
-}
-
-function previewImage(props: ImageProps): Promise<void>;
-function previewImage(props: ImageProps[], defaultIndex?: number): Promise<void>;
-function previewImage(props: any, defaultIndex?: any) {
-  return new Promise<void>((resolve) => {
-    const { close } = utils.openPortal(
-      <span style={{ display: 'none' }}>
-        <ImagePreview
-          data={Array.isArray(props) ? [...props] : [props]}
-          current={defaultIndex || 0}
-          afterClose={() => {
-            close();
-            resolve();
-          }}
-        />
-      </span>,
-    );
-  });
-}
-
-function ImagePreview({
-  data,
-  current,
-  afterClose,
-}: {
-  data: ImageProps[];
-  current?: number;
-  afterClose?: () => void;
-}) {
-  const [visible, setVisible] = useState(true);
-  const { props: preview } = useAntdPortalProps({
-    props: {
-      current,
-      visible,
-      afterClose,
-      onVisibleChange: setVisible,
-    },
-    hackGetPopupContainer: false,
-    // TODO after close won't work
-    afterVisibleChangeType: 'afterClose',
-  });
-
-  if (data.length === 1) {
-    return <Image {...data[0]} preview={preview} />;
-  }
-
-  return (
-    <Image.PreviewGroup preview={preview}>
-      {data.map((props, i) => (
-        <Image {...props} key={i} />
-      ))}
-    </Image.PreviewGroup>
   );
 }

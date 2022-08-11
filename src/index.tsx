@@ -3,7 +3,7 @@ import { useCreation, useMemoizedFn } from 'ahooks';
 import { createPortalUtil } from './internals';
 
 export * from './hooks';
-export { Drawer, Modal, PopConfirm } from './components';
+export { Drawer, Modal, PopConfirm, ImagePreview } from './components';
 
 export type {
   OpenPortalResult,

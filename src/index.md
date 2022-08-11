@@ -41,6 +41,10 @@ const App: React.FC = () => (
 export default App;
 ```
 
+## Preview Image
+
+<code src="./demo/preview-image.tsx" />
+
 ## createPortalUtil
 
 Use `createPortalUtil` to create global shared portal methods and context holder.
