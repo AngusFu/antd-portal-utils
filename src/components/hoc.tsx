@@ -4,23 +4,23 @@ import AntdModal from 'antd/es/modal';
 
 import { useAntdPortalProps } from '../hooks';
 
-type CompTypes = typeof AntdDrawer | typeof AntdModal;
+type DrawerType = typeof AntdDrawer;
+type ModalType = typeof AntdModal;
+type Config = { hackGetPopupContainer?: boolean };
 
-export function withAntdPortalUtilsAdaptor<T extends CompTypes>(
-  Comp: T,
-  config?: {
-    hackGetPopupContainer?: boolean;
-    afterVisibleChangeType?: 'afterVisibleChange' | 'afterClose';
-  },
-) {
-  const Modified = function (props: unknown) {
-    const hackPopup = config?.hackGetPopupContainer ?? true;
+export function withAntdPortalUtilsAdaptor(Comp: DrawerType, config?: Config): DrawerType;
+export function withAntdPortalUtilsAdaptor(Comp: ModalType, config?: Config): ModalType;
+export function withAntdPortalUtilsAdaptor(Comp: any, config?: Config) {
+  const afterVisibleChangeType = Comp === AntdModal ? 'afterClose' : 'afterVisibleChange';
+  const hackPopup = config?.hackGetPopupContainer ?? true;
+
+  const Modified = function (props: any) {
     const { ctxKey, props: portalProps } = useAntdPortalProps({
-      props: props as any,
-      afterVisibleChangeType: config?.afterVisibleChangeType,
-      hackGetPopupContainer: (props as any).__hack_popup_container__ ?? hackPopup,
+      props,
+      afterVisibleChangeType,
+      hackGetPopupContainer: hackPopup,
     });
-    const propsGetContainer = (props as any).getContainer;
+    const propsGetContainer = props.getContainer;
 
     return (
       <Comp
@@ -34,7 +34,7 @@ export function withAntdPortalUtilsAdaptor<T extends CompTypes>(
   cloneProperties(Comp, Modified);
   Modified.displayName = `withAntdPortalUtilsAdaptor(${Comp.displayName || Comp.name})`;
 
-  return Modified as T;
+  return Modified as any;
 }
 
 function cloneProperties<T extends Function>(from: T, to: any) {

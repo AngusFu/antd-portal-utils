@@ -13,9 +13,9 @@ import {
 export const HOOK_POPUP_CONTAINER_CLASS = '__container_for_getPopupContainer__';
 
 type CallbackResult<T extends 'afterVisibleChange' | 'afterClose'> = T extends 'afterClose'
-  ? (...args: any[]) => void
+  ? { [key in T]: (...args: any[]) => void }
   : T extends 'afterVisibleChange'
-  ? (visible: boolean) => void
+  ? { [key in T]: (visible: boolean) => void }
   : null;
 
 export function useAntdPortalProps<
@@ -27,10 +27,11 @@ export function useAntdPortalProps<
   afterVisibleChangeType?: V;
 }): {
   ctxKey: Key;
-  props: P & {
+  props: Omit<P, V> & {
     visible: boolean;
     children: JSX.Element;
   } & CallbackResult<V>;
+  changeVisibility: (visible: boolean) => void;
 } {
   const { props, hackGetPopupContainer, afterVisibleChangeType } = option;
   const { visible: propVisible, children } = props;
@@ -86,7 +87,7 @@ export function useAntdPortalProps<
   };
 
   const cbType = (afterVisibleChangeType ?? 'afterVisibleChange') as V;
-  const cbData = { [cbType]: callbacks[cbType] } as unknown as CallbackResult<V>;
+  const cbData = { [cbType]: callbacks[cbType] } as CallbackResult<V>;
   return {
     ctxKey,
     props: {
@@ -95,6 +96,7 @@ export function useAntdPortalProps<
       visible,
       children: childrenWrapped,
     },
+    changeVisibility: (v: boolean) => setVisible(v),
   };
 }
 

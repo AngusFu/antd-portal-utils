@@ -93,7 +93,7 @@ function PopConfirmPortal({
     'animationend',
     (e: AnimationEvent) => {
       if (e.currentTarget === e.target) {
-        afterVisibleChange?.(realVisible);
+        afterVisibleChange(realVisible);
       }
     },
     {
