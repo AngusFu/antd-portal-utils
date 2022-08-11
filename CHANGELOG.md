@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/AngusFu/antd-portal-utils/compare/v1.0.11...v1.1.0) (2022-08-11)
+
+### Features
+
+- add ImagePreview component ([81ff393](https://github.com/AngusFu/antd-portal-utils/commit/81ff3937520756ce5a9f7b3541a17013ef09f194))
+
+### Bug Fixes
+
+- type issues ([8927b53](https://github.com/AngusFu/antd-portal-utils/commit/8927b53525fe7e5c161cfa0ca744f090b9d9b862))
+
 ### [1.0.11](https://github.com/AngusFu/antd-portal-utils/compare/v1.0.10...v1.0.11) (2022-08-10)
 
 ### Bug Fixes
