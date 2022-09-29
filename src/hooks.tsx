@@ -1,7 +1,7 @@
-import type { Key, PropsWithChildren, ReactNode } from 'react';
+import type { Key } from 'react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useMemoizedFn, useUnmount } from 'ahooks';
+import { useUnmount } from 'ahooks';
 import ConfigProvider from 'antd/es/config-provider';
 
 import {
@@ -12,47 +12,24 @@ import {
 
 export const HOOK_POPUP_CONTAINER_CLASS = '__container_for_getPopupContainer__';
 
-type CallbackResult<T extends 'afterVisibleChange' | 'afterClose'> = T extends 'afterClose'
-  ? { [key in T]: (...args: any[]) => void }
-  : T extends 'afterVisibleChange'
-  ? { [key in T]: (visible: boolean) => void }
-  : null;
-
-export function useAntdPortalProps<
-  P extends PropsWithChildren<{ visible?: boolean }>,
-  V extends 'afterVisibleChange' | 'afterClose' = 'afterVisibleChange',
->(option: {
-  props: P;
+export function useAntdPortalProps(option: {
+  props: any;
+  visiblePropName: string;
   hackGetPopupContainer?: boolean;
-  afterVisibleChangeType?: V;
-}): {
-  ctxKey: Key;
-  props: Omit<P, V> & {
-    visible: boolean;
-    children: JSX.Element;
-  } & CallbackResult<V>;
-  changeVisibility: (visible: boolean) => void;
-} {
-  const { props, hackGetPopupContainer, afterVisibleChangeType } = option;
-  const { visible: propVisible, children } = props;
+}) {
+  const { props, hackGetPopupContainer, visiblePropName } = option;
+  const { children, [visiblePropName]: propVisible, ...restProps } = props;
 
   const ctxKey = usePortalCtxKeyInternalUseOnly();
-
   const [visible, setVisible, afterVisibilityChange] = useCustomVisibilityControl(
-    ctxKey ? false : Boolean(propVisible),
-  );
-
-  useEffect(
-    function () {
-      setVisible(Boolean(propVisible));
-    },
-    [propVisible, setVisible],
+    ctxKey,
+    propVisible,
   );
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const childrenWrapped = (
     <CtxResetInternalUseOnly>
-      <ConfigProvider getPopupContainer={(node) => containerRef.current || document.body}>
+      <ConfigProvider getPopupContainer={() => containerRef.current || document.body}>
         {hackGetPopupContainer ? (
           <div
             ref={containerRef}
@@ -68,67 +45,24 @@ export function useAntdPortalProps<
     </CtxResetInternalUseOnly>
   );
 
-  const callbacks = {
-    afterClose(...args: any[]) {
-      try {
-        (props as unknown as any).afterClose?.(...args);
-      } finally {
-        afterVisibilityChange(false);
-      }
-    },
-    // drawer & pop-confirm
-    afterVisibleChange(v: boolean) {
-      try {
-        (props as unknown as any).afterVisibleChange?.(v);
-      } finally {
-        afterVisibilityChange(v);
-      }
-    },
-  };
-
-  const cbType = (afterVisibleChangeType ?? 'afterVisibleChange') as V;
-  const cbData = { [cbType]: callbacks[cbType] } as CallbackResult<V>;
   return {
     ctxKey,
+
     props: {
-      ...props,
-      ...cbData,
-      visible,
+      ...restProps,
       children: childrenWrapped,
+      [visiblePropName]: visible,
     },
+
+    afterVisibilityChange,
     changeVisibility: (v: boolean) => setVisible(v),
   };
 }
 
-function useCustomVisibilityControl(defaultVisible: boolean) {
-  const [visible, setVisible] = useState(defaultVisible);
-
-  const ctxKey = usePortalCtxKeyInternalUseOnly();
-  const ctxMethods = usePortalCtxMethodsInternalUseOnly();
-  const { afterVisibilityChange } = useRegisterCustomCloseMethod(() => setVisible(false));
-
-  // avoid memory leak
-  useUnmount(() => ctxMethods?.closePortal({ key: ctxKey }));
-
-  return [visible, setVisible, afterVisibilityChange] as const;
-}
-
-function useRegisterCustomCloseMethod(fn: () => void) {
-  const closeFn = useMemoizedFn(fn);
-  const ctxKey = usePortalCtxKeyInternalUseOnly();
+function useCustomVisibilityControl(ctxKey: Key, propVisible: boolean) {
   const ctxMethods = usePortalCtxMethodsInternalUseOnly();
 
-  useEffect(
-    function () {
-      if (ctxKey && ctxMethods) {
-        ctxMethods.setCustomCloseMethod({
-          key: ctxKey,
-          fn: closeFn,
-        });
-      }
-    },
-    [ctxKey, ctxMethods, closeFn],
-  );
+  const [visible, setVisible] = useState(ctxKey ? false : propVisible);
 
   const afterVisibilityChange = useCallback(
     (visible: boolean) => {
@@ -139,8 +73,21 @@ function useRegisterCustomCloseMethod(fn: () => void) {
     [ctxKey, ctxMethods],
   );
 
-  return {
-    ctxKey,
-    afterVisibilityChange,
-  };
+  // register custom close method
+  useEffect(() => {
+    if (ctxKey && ctxMethods) {
+      ctxMethods.setCustomCloseMethod({
+        key: ctxKey,
+        fn: () => setVisible(false),
+      });
+    }
+  }, [ctxKey, ctxMethods]);
+
+  // sync visibility
+  useEffect(() => setVisible(Boolean(propVisible)), [propVisible, setVisible]);
+
+  // avoid memory leak
+  useUnmount(() => ctxMethods?.closePortal({ key: ctxKey }));
+
+  return [visible, setVisible, afterVisibilityChange] as const;
 }

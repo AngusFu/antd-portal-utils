@@ -35,7 +35,7 @@ export default function Demo() {
 
   const handleOpenDrawer = function () {
     const { close } = openPortal(
-      <Drawer visible={true} title="Hello World" onClose={() => close()}>
+      <Drawer open title="Hello World" onClose={() => close()}>
         {content}
         <br />
         <Button
@@ -52,7 +52,7 @@ export default function Demo() {
           style={{ margin: '0 0 100vh' }}
           onClick={(e) => {
             const { close } = childPortalUtil.openPortal(
-              <Drawer visible onClose={() => close()} getContainer={() => document.body}>
+              <Drawer open onClose={() => close()} getContainer={() => document.body}>
                 Hi there
               </Drawer>,
             );
@@ -68,7 +68,7 @@ export default function Demo() {
 
   const handleOpenModal = function () {
     const { close } = openPortal(
-      <Modal visible={true} onCancel={() => close()}>
+      <Modal open onCancel={() => close()}>
         {content}
       </Modal>,
     );

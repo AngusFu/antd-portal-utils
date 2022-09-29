@@ -16,6 +16,7 @@ This is inspired by the `Modal.useModal` API in [Ant Design](<https://ant-design
 
 <br />
 
+<!--
 ### For Mac users
 
 <Alert type="warning">
@@ -40,6 +41,7 @@ const App: React.FC = () => (
 
 export default App;
 ```
+-->
 
 ## Preview Image
 

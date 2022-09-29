@@ -20,7 +20,8 @@ export default function ImagePreview(props: ImagePreviewProps) {
 
   const {
     changeVisibility,
-    props: { afterVisibleChange: afterVisibilityChanged, ...preview },
+    props: { ...preview },
+    afterVisibilityChange: afterVisibilityChanged,
   } = useAntdPortalProps({
     props: {
       current,
@@ -28,11 +29,12 @@ export default function ImagePreview(props: ImagePreviewProps) {
       wrapClassName,
       afterVisibleChange,
     },
+    visiblePropName: 'visible',
     hackGetPopupContainer: false,
-    afterVisibleChangeType: 'afterVisibleChange',
   });
 
   useEventListener(
+    // TODO reduced motion support
     'animationend',
     (e: AnimationEvent) => {
       if (e.currentTarget === e.target) {

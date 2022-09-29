@@ -5,11 +5,13 @@ import { useClickAway, useEventListener, useUnmount } from 'ahooks';
 import ConfigProvider from 'antd/es/config-provider';
 import type { PopconfirmProps } from 'antd/es/popconfirm';
 import AntdPopconfirm from 'antd/es/popconfirm';
+import classNames from 'classnames';
 import { usePopper } from 'react-popper';
 
 import { HOOK_POPUP_CONTAINER_CLASS, useAntdPortalProps } from '../hooks';
-import classNames from 'classnames';
 import { usePortalCtxKeyInternalUseOnly, usePortalCtxMethodsInternalUseOnly } from '../internals';
+
+import { OPEN_OVER_VISIBLE } from './utils';
 
 let isConnected = function (node: Node) {
   // SEE https://github.com/ungap/is-connected
@@ -42,6 +44,8 @@ export default /* #__PURE__*/ forwardRef(function Popconfirm(
   return <AntdPopconfirm {...props} ref={ref} />;
 });
 
+const visiblePropName = OPEN_OVER_VISIBLE ? 'open' : 'visible';
+
 function PopConfirmPortal({
   refElemRef,
   ...props
@@ -57,17 +61,18 @@ function PopConfirmPortal({
   const ctxMethods = usePortalCtxMethodsInternalUseOnly();
   const {
     ctxKey,
-    props: { afterVisibleChange, ...popConfirmProps },
+    afterVisibilityChange,
+    props: { [visiblePropName]: visible, ...popConfirmProps },
   } = useAntdPortalProps({
     props: {
-      visible: true,
+      [visiblePropName]: true,
       ...props,
     },
+    visiblePropName,
     hackGetPopupContainer: false,
-    afterVisibleChangeType: 'afterVisibleChange',
   });
   const isReferenceValid = reference && isConnected(reference);
-  const realVisible = isReferenceValid ? popConfirmProps.visible : false;
+  const realVisible = isReferenceValid ? visible : false;
 
   const triggerDOM = useFakeTrigger({
     ...popConfirmProps,
@@ -90,10 +95,11 @@ function PopConfirmPortal({
   // HACK `afterVisibleChange` issue
   // SEE https://github.com/ant-design/ant-design/issues/28151
   useEventListener(
+    // TODO reduced motion support
     'animationend',
     (e: AnimationEvent) => {
       if (e.currentTarget === e.target) {
-        afterVisibleChange(realVisible);
+        afterVisibilityChange(realVisible);
       }
     },
     {
@@ -105,14 +111,18 @@ function PopConfirmPortal({
     return null;
   }
 
+  const newProps = {
+    ...popConfirmProps,
+    [OPEN_OVER_VISIBLE ? 'open' : 'visible']: realVisible,
+  };
+
   return (
     <AntdPopconfirm
-      {...popConfirmProps}
+      {...newProps}
       ref={ref}
       getPopupContainer={getPopupContainer}
-      visible={realVisible}
-      openClassName={classNames(triggerUniqClass, popConfirmProps.openClassName)}
-      overlayClassName={classNames(overlayUniqClass, popConfirmProps.overlayClassName)}
+      openClassName={classNames(triggerUniqClass, newProps.openClassName)}
+      overlayClassName={classNames(overlayUniqClass, newProps.overlayClassName)}
     >
       {triggerDOM}
     </AntdPopconfirm>
