@@ -65,10 +65,12 @@ export function withAntdPortalUtilsAdaptor(Comp: any, config?: Config) {
             afterVisibilityChange(visible);
           };
 
+    const { afterOpenChange: _, afterVisibleChange: __, ...propsToPass } = portalProps;
+
     return (
       <Comp
         {...{
-          ...portalProps,
+          ...propsToPass,
           [closeType]: closeCallback,
         }}
         key={ctxKey || undefined}
