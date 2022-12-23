@@ -3,7 +3,6 @@ import React from 'react';
 import { ImagePreview, usePortal } from 'antd-portal-utils';
 
 import { Button } from 'antd';
-import 'antd/dist/antd.css';
 
 export default function Demo() {
   const [utils, contextHolder] = usePortal();
