@@ -174,15 +174,19 @@ function usePopupForceAlign(ref: RefObject<any>) {
 }
 
 function usePopupContainerMethod({ reference }: { reference?: HTMLElement }) {
-  const config = useContext(ConfigProvider.ConfigContext);
+  const { getPopupContainer } = useContext(ConfigProvider.ConfigContext);
 
-  return function getPopupContainer(node: any) {
+  if (!getPopupContainer) {
+    return undefined;
+  }
+
+  return function (node: any) {
     const closestDrawer = reference?.closest(`.${HOOK_POPUP_CONTAINER_CLASS}`);
 
     if (closestDrawer) {
       return closestDrawer as HTMLDivElement;
     }
 
-    return config.getPopupContainer?.(node) || document.body;
+    return getPopupContainer(node);
   };
 }
