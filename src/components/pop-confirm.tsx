@@ -76,6 +76,7 @@ function PopConfirmPortal({
 
   const triggerDOM = useFakeTrigger({
     ...popConfirmProps,
+    visible,
     reference,
   });
   const getPopupContainer = usePopupContainerMethod({ reference });
