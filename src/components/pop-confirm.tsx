@@ -9,7 +9,7 @@ import { usePopper } from 'react-popper';
 import { HOOK_POPUP_CONTAINER_CLASS, useAntdPortalProps } from '../hooks';
 import { usePortalCtxKeyInternalUseOnly, usePortalCtxMethodsInternalUseOnly } from '../internals';
 
-import { OPEN_OVER_VISIBLE } from './utils';
+import { visibilityProp } from './utils';
 
 let isConnected = function (node: Node) {
   // SEE https://github.com/ungap/is-connected
@@ -42,8 +42,6 @@ export default /* #__PURE__*/ forwardRef(function Popconfirm(
   return <AntdPopconfirm {...props} ref={ref} />;
 });
 
-const visiblePropName = OPEN_OVER_VISIBLE ? 'open' : 'visible';
-
 function PopConfirmPortal({
   refElemRef,
   ...props
@@ -60,13 +58,13 @@ function PopConfirmPortal({
   const {
     ctxKey,
     afterVisibilityChange,
-    props: { [visiblePropName]: visible, ...popConfirmProps },
+    props: { [visibilityProp]: visible, ...popConfirmProps },
   } = useAntdPortalProps({
     props: {
-      [visiblePropName]: true,
+      [visibilityProp]: true,
       ...props,
     },
-    visiblePropName,
+    visiblePropName: visibilityProp,
     hackGetPopupContainer: false,
   });
   const isReferenceValid = reference && isConnected(reference);
@@ -112,7 +110,7 @@ function PopConfirmPortal({
 
   const newProps = {
     ...popConfirmProps,
-    [OPEN_OVER_VISIBLE ? 'open' : 'visible']: realVisible,
+    [visibilityProp]: realVisible,
   };
 
   return (
