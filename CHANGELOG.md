@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.3](https://github.com/AngusFu/antd-portal-utils/compare/v1.2.2...v1.2.3) (2023-03-23)
+
+### Bug Fixes
+
+- openPopConfirm triggered multiple times ([ce47150](https://github.com/AngusFu/antd-portal-utils/commit/ce4715048228bf97e8cbacdc40c1971578359daf))
+
 ### [1.2.1](https://github.com/AngusFu/antd-portal-utils/compare/v1.2.0...v1.2.1) (2022-09-29)
 
 ## [1.1.0](https://github.com/AngusFu/antd-portal-utils/compare/v1.0.11...v1.1.0) (2022-08-11)
