@@ -4,7 +4,7 @@ import { useCreation, useEventListener } from 'ahooks';
 import { useAntdPortalProps } from 'antd-portal-utils';
 
 import type { ImageProps } from 'antd';
-import Image from 'antd/es/image';
+import { Image } from 'antd';
 
 export type ImagePreviewProps = {
   data: ImageProps | ImageProps[];

@@ -2,9 +2,7 @@ import { CSSProperties, forwardRef, MutableRefObject, Ref, RefObject, useContext
 import React, { useRef, useState } from 'react';
 
 import { useClickAway, useEventListener, useUnmount } from 'ahooks';
-import ConfigProvider from 'antd/es/config-provider';
-import type { PopconfirmProps } from 'antd/es/popconfirm';
-import AntdPopconfirm from 'antd/es/popconfirm';
+import { ConfigProvider, Popconfirm as AntdPopconfirm, PopconfirmProps } from 'antd';
 import classNames from 'classnames';
 import { usePopper } from 'react-popper';
 

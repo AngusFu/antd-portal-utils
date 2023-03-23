@@ -1,6 +1,5 @@
 import React from 'react';
-import AntdDrawer from 'antd/es/drawer';
-import AntdModal from 'antd/es/modal';
+import { Drawer as AntdDrawer, Modal as AntdModal } from 'antd';
 
 import { useAntdPortalProps } from '../hooks';
 import { cloneProperties, OPEN_OVER_VISIBLE } from './utils';

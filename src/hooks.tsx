@@ -2,7 +2,7 @@ import type { Key } from 'react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useUnmount } from 'ahooks';
-import ConfigProvider from 'antd/es/config-provider';
+import { ConfigProvider } from 'antd';
 
 import {
   CtxResetInternalUseOnly,
