@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/AngusFu/antd-portal-utils/compare/v1.2.3...v2.0.0) (2023-03-23)
+
+### Features
+
+- 支持 antd v5 ([46b0f5f](https://github.com/AngusFu/antd-portal-utils/commit/46b0f5f93efc91217b7a4ab5d0e329063aab1478))
+
+### Bug Fixes
+
+- openPopConfirm triggered multiple times ([2c18983](https://github.com/AngusFu/antd-portal-utils/commit/2c18983ab97403f82266c74d97414ea5c28cc18c))
+- reduce `document.body` usage ([b8922a2](https://github.com/AngusFu/antd-portal-utils/commit/b8922a2c840c8b6d584c2c204109ed9325466c37))
+
 ### [1.2.3](https://github.com/AngusFu/antd-portal-utils/compare/v1.2.2...v1.2.3) (2023-03-23)
 
 ### Bug Fixes

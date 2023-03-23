@@ -2,16 +2,14 @@ import { CSSProperties, forwardRef, MutableRefObject, Ref, RefObject, useContext
 import React, { useRef, useState } from 'react';
 
 import { useClickAway, useEventListener, useUnmount } from 'ahooks';
-import ConfigProvider from 'antd/es/config-provider';
-import type { PopconfirmProps } from 'antd/es/popconfirm';
-import AntdPopconfirm from 'antd/es/popconfirm';
+import { ConfigProvider, Popconfirm as AntdPopconfirm, PopconfirmProps } from 'antd';
 import classNames from 'classnames';
 import { usePopper } from 'react-popper';
 
 import { HOOK_POPUP_CONTAINER_CLASS, useAntdPortalProps } from '../hooks';
 import { usePortalCtxKeyInternalUseOnly, usePortalCtxMethodsInternalUseOnly } from '../internals';
 
-import { OPEN_OVER_VISIBLE } from './utils';
+import { visibilityProp } from './utils';
 
 let isConnected = function (node: Node) {
   // SEE https://github.com/ungap/is-connected
@@ -44,8 +42,6 @@ export default /* #__PURE__*/ forwardRef(function Popconfirm(
   return <AntdPopconfirm {...props} ref={ref} />;
 });
 
-const visiblePropName = OPEN_OVER_VISIBLE ? 'open' : 'visible';
-
 function PopConfirmPortal({
   refElemRef,
   ...props
@@ -62,13 +58,13 @@ function PopConfirmPortal({
   const {
     ctxKey,
     afterVisibilityChange,
-    props: { [visiblePropName]: visible, ...popConfirmProps },
+    props: { [visibilityProp]: visible, ...popConfirmProps },
   } = useAntdPortalProps({
     props: {
-      [visiblePropName]: true,
+      [visibilityProp]: true,
       ...props,
     },
-    visiblePropName,
+    visiblePropName: visibilityProp,
     hackGetPopupContainer: false,
   });
   const isReferenceValid = reference && isConnected(reference);
@@ -114,7 +110,7 @@ function PopConfirmPortal({
 
   const newProps = {
     ...popConfirmProps,
-    [OPEN_OVER_VISIBLE ? 'open' : 'visible']: realVisible,
+    [visibilityProp]: realVisible,
   };
 
   return (
@@ -178,15 +174,19 @@ function usePopupForceAlign(ref: RefObject<any>) {
 }
 
 function usePopupContainerMethod({ reference }: { reference?: HTMLElement }) {
-  const config = useContext(ConfigProvider.ConfigContext);
+  const { getPopupContainer } = useContext(ConfigProvider.ConfigContext);
 
-  return function getPopupContainer(node: any) {
+  if (!getPopupContainer) {
+    return undefined;
+  }
+
+  return function (node: any) {
     const closestDrawer = reference?.closest(`.${HOOK_POPUP_CONTAINER_CLASS}`);
 
     if (closestDrawer) {
       return closestDrawer as HTMLDivElement;
     }
 
-    return config.getPopupContainer?.(node) || document.body;
+    return getPopupContainer(node);
   };
 }

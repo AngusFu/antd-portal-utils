@@ -1,5 +1,4 @@
-import AntdDrawer from 'antd/es/drawer';
-import AntdModal from 'antd/es/modal';
+import { Drawer as AntdDrawer, Modal as AntdModal } from 'antd';
 
 import { withAntdPortalUtilsAdaptor } from './hoc';
 
