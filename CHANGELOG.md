@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.4](https://github.com/AngusFu/antd-portal-utils/compare/v1.2.3...v1.2.4) (2023-03-29)
+
+### Bug Fixes
+
+- image preview afterVisibleChange not called ([7a90593](https://github.com/AngusFu/antd-portal-utils/commit/7a905934f8751574652b913e3aefebbfd6f1abe9))
+
 ### [1.2.3](https://github.com/AngusFu/antd-portal-utils/compare/v1.2.2...v1.2.3) (2023-03-23)
 
 ### Bug Fixes
