@@ -15,7 +15,10 @@ export type ImagePreviewProps = {
 export default function ImagePreview(props: ImagePreviewProps) {
   const { current, afterVisibleChange } = props;
   const data = Array.isArray(props.data) ? props.data : [props.data];
-  const wrapClassName = useCreation(() => `preview-root-${Date.now()}`, []);
+  const wrapClassName = useCreation(
+    () => `preview-root-${Math.random().toString(32).slice(2)}`,
+    [],
+  );
   const visibleRef = useRef(true);
 
   const {
@@ -27,7 +30,6 @@ export default function ImagePreview(props: ImagePreviewProps) {
       current,
       visible: true,
       wrapClassName,
-      afterVisibleChange,
     },
     visiblePropName: 'visible',
     hackGetPopupContainer: false,
@@ -39,6 +41,7 @@ export default function ImagePreview(props: ImagePreviewProps) {
     (e: AnimationEvent) => {
       if (e.currentTarget === e.target) {
         afterVisibilityChanged(visibleRef.current);
+        afterVisibleChange?.(visibleRef.current);
       }
     },
     {
