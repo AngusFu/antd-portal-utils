@@ -158,6 +158,7 @@ function usePortals() {
     } else {
       setPortals((prev) => prev.filter(([k]) => k !== key));
     }
+    setCustomCloseHandles((prev) => [...prev.filter((el) => el[0] !== key)]);
   }, []);
 
   const setCustomCloseMethod = useCallback(
